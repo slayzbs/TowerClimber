@@ -1,37 +1,38 @@
-# 🚀 TOWER CLIMBER
+# 🕹️ TOWER CLIMBER
 
-Bienvenue dans **Tower Climber**, un jeu d'arcade vertical développé en **HTML**, **CSS** mais surtout **JavaScript**. Défiez la gravité, sautez de plateforme en plateforme et dépassez votre record !
-
----
-
-## 🎮 COMMENT JOUER ?
-
-Le but est de monter le plus haut possible sans jamais tomber en bas de l'écran.
-
-* **DÉPLACEMENTS** : Touches fléchées **GAUCHE** et **DROITE**.
-* **SAUT** : Flèche **HAUT**.
-* **SCORE** : Plus vous montez, plus votre score augmente !
+Welcome to **Tower Climber**, a vertical arcade game developed in **HTML**, **CSS**, but above all in **JavaScript**. Defy gravity, jump from platform to platform, and beat your high score !
 
 ---
 
-## ⚡ INSTALLATION RAPIDE
+## 🎮 HOW TO PLAY ?
 
-1. **Clonez ce dépôt** ou téléchargez les fichiers avec cette commande :
+The goal is to climb as high as possible without ever falling to the bottom of the screen.
+
+* **MOVEMENT**: Use the **LEFT** and **RIGHT** arrow keys.
+* **JUMP**: Use the **UP** arrow key.
+* **SCORE**: The higher you climb, the higher your score!
+
+---
+
+## ⚡ QUICK INSTALLATION
+
+1.  **Clone this repository** or download the files with this command:
    ```bash
    git clone https://github.com/votre-nom/tower-climber.git
+   ```
 
-3. **Lancez le jeu** : Ouvrez simplement le fichier `index.html` dans votre navigateur.
+2. **Launch the game**: Simply open the `index.html` file in your browser.
 
-4. **Grimpez !**
-
----
-
-## 🌟 PROCHAINES ÉTAPES
-
-* [x] Système de mise en pause
-* [x] Système de meilleurs scores (Local Storage).
-* [ ] Ajout de différents types de plateformes (mobiles, fragiles).
-* [ ] Effets sonores et musique d'ambiance 8-bit.
+3. **Climb !**
 
 ---
-*Développé par slayzbs.*
+
+## 🚀 Roadmap
+
+* [x] Pause system
+* [x] High score system (Local Storage)
+* [ ] Added different platform types (mobile, fragile)
+* [ ] 8-bit sound effects and background music
+
+---
+*Developed by slayzbs.*
