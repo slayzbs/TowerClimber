@@ -17,11 +17,12 @@ Le but est de monter le plus haut possible sans jamais tomber en bas de l'écran
 ## ⚡ INSTALLATION RAPIDE
 
 1. **Clonez ce dépôt** ou téléchargez les fichiers avec cette commande :
-   `git clone https://github.com/votre-nom/tower-climber.git`
+   ```bash
+   git clone https://github.com/votre-nom/tower-climber.git
 
-2. **Lancez le jeu** : Ouvrez simplement le fichier `index.html` dans votre navigateur.
+3. **Lancez le jeu** : Ouvrez simplement le fichier `index.html` dans votre navigateur.
 
-3. **Grimpez !**
+4. **Grimpez !**
 
 ---
 
