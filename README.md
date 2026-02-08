@@ -38,4 +38,4 @@ The goal is to climb as high as possible without ever falling to the bottom of t
 * [ ] 8-bit sound effects and background music
 
 ---
-*Developed by slayzbs.*
+*Developed by slayzbs*
