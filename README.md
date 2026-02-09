@@ -34,6 +34,7 @@ The goal is to climb as high as possible without ever falling to the bottom of t
 
 * [x] Pause system
 * [x] High score system (Local Storage)
+* [ ] Mobile version
 * [ ] Added different platform types (mobile, fragile)
 * [ ] 8-bit sound effects and background music
 
