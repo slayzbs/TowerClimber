@@ -200,7 +200,7 @@ function update() {
                 <p>SCORE: ${score}</p>
                 <p style="color: #ffff00;">RECORD: ${highScore}</p> 
                 <br>
-                <p>ESPACE POUR REJOUER</p>
+                <p><i>ESPACE POUR REJOUER</i></p>
             `;
             overlay.style.display = 'block';
         }
