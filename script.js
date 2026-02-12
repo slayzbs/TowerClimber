@@ -74,7 +74,7 @@ function init() {
 
     // Affichage de l'overlay de lancement
     overlay.style.display = 'block';
-    overlay.innerHTML = `<h1>TOWER CLIMBER</h1><p>FLECHES: BOUGER</p><p>ESPACE: PAUSE</p><p><i>sautez pour commencer :)</i></p>`;
+    overlay.innerHTML = `<h1>TOWER CLIMBER</h1><p>FLECHES: BOUGER</p><p>ESPACE: PAUSE</p><p><i>SAUTER POUR COMMENCER</i></p>`;
 }
 
 // REGLAGE DES TOUCHES
