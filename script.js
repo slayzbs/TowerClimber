@@ -89,7 +89,7 @@ window.onkeydown = (e) => {
             isPaused = !isPaused;
             overlay.style.display = isPaused ? 'block' : 'none';
             if (isPaused) {
-                overlay.innerHTML = `<h1>PAUSE</h1><p>ESPACE POUR REPRENDRE</p>`;
+                overlay.innerHTML = `<h1>PAUSE</h1><p><i>ESPACE POUR REPRENDRE</i></p>`;
             }
         }
         return;
