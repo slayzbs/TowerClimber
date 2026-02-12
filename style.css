@@ -65,7 +65,7 @@ body {
 }
 
 /* Paragraphe en bas qui clignote */
-#overlay p i {
+p i {
     display: block;
     margin-top: 15px;
     color: #00ffcc;
