@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Climber</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            background: #050505; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: relative;
+            border: 4px solid #ff0055; 
+            box-shadow: 0 0 20px #ff0055, inset 0 0 10px #ff0055;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #00ffcc; 
+            font-size: 16px;
+            z-index: 10;
+            text-shadow: 0 0 8px #00ffcc;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95); 
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border: 3px solid #00ffcc;
+            width: 320px;
+            z-index: 20;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.5);
+        }
+
+        #overlay h1 {
+            color: #ff0055;
+            margin-top: 0;
+            font-size: 22px; 
+            text-shadow: 3px 3px #000;
+            margin-bottom: 25px;
+        }
+
+        #overlay p {
+            font-size: 10px;
+            line-height: 2;
+            margin: 10px 0;
+        }
+
+        p i {
+            display: block;
+            margin-top: 15px;
+            color: #00ffcc;
+            font-style: normal;
+            animation: blink 1s infinite;
+        }
+
+        canvas {
+            background: #000;
+            display: block;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div id="ui">SCORE: <span id="score">0</span></div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="overlay">
+            <h1>TOWER CLIMBER</h1>
+            <p>FLECHES: BOUGER</p>
+            <p>ESPACE: PAUSE</p>
+            <p><i>SAUTER POUR COMMENCER</i></p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const overlay = document.getElementById('overlay');
+
+        canvas.width = 400;
+        canvas.height = 600;
+
+        let score = 0;
+        let gameActive = true;
+        let hasStarted = false;
+        let isPaused = false;
+        const gravity = 0.5;
+        const jumpStrength = -12;
+        const superJumpStrength = -22;
+
+        const player = {
+            x: 185,
+            y: 540,
+            width: 30,
+            height: 30,
+            vx: 0,
+            vy: 0,
+            grounded: true
+        };
+
+        let platforms = [];
+
+        function addPlatform(y) {
+            const isSuper = Math.random() < 0.2;
+            platforms.push({
+                x: Math.random() * (canvas.width - 70),
+                y: y,
+                width: 70,
+                height: 15,
+                type: isSuper ? 'super' : 'normal',
+                isPassed: false
+            });
+        }
+
+        function init() {
+            score = 0;
+            gameActive = true;
+            hasStarted = false;
+            isPaused = false;
+            scoreElement.innerText = score;
+            
+            player.x = canvas.width / 2 - 15;
+            player.y = 540;
+            player.vy = 0;
+            player.vx = 0;
+            player.grounded = true;
+
+            platforms = [];
+            platforms.push({ x: 0, y: 570, width: canvas.width, height: 30, type: 'normal', isPassed: true });
+            platforms.push({ x: canvas.width / 2 - 35, y: 460, width: 70, height: 15, type: 'normal', isPassed: false });
+
+            for(let i = 2; i < 7; i++) { 
+                addPlatform(570 - (i * 110)); 
+            }
+
+            overlay.style.display = 'block';
+            overlay.innerHTML = `<h1>TOWER CLIMBER</h1><p>FLECHES: BOUGER</p><p>ESPACE: PAUSE</p><p><i>SAUTER POUR COMMENCER</i></p>`;
+        }
+
+        const keys = {};
+        window.onkeydown = (e) => {
+            if (e.code === 'Space') {
+                if (!gameActive) {
+                    init();
+                    requestAnimationFrame(loop);
+                } else if (hasStarted) {
+                    isPaused = !isPaused;
+                    overlay.style.display = isPaused ? 'block' : 'none';
+                    if (isPaused) {
+                        overlay.innerHTML = `<h1>PAUSE</h1><p><i>ESPACE POUR REPRENDRE</i></p>`;
+                    }
+                }
+                return;
+            }
+            keys[e.key.toLowerCase()] = true;
+            keys[e.code] = true;
+        };
+
+        window.onkeyup = (e) => {
+            keys[e.key.toLowerCase()] = false;
+            keys[e.code] = false;
+        };
+
+        function update() {
+            if (!gameActive || isPaused) return;
+
+            if (keys['arrowleft'] || keys['q'] || keys['a']) player.vx = -6;
+            else if (keys['arrowright'] || keys['d']) player.vx = 6;
+            else player.vx = 0;
+
+            if ((keys['arrowup'] || keys['z'] || keys['w']) && player.grounded) {
+                player.vy = jumpStrength;
+                player.grounded = false;
+                if (!hasStarted) { 
+                    hasStarted = true; 
+                    overlay.style.display = 'none';
+                }
+            }
+
+            if (hasStarted || !player.grounded) {
+                player.vy += gravity;
+                player.y += player.vy;
+                player.x += player.vx;
+            }
+
+            if (player.x + player.width < 0) player.x = canvas.width;
+            if (player.x > canvas.width) player.x = -player.width;
+
+            let currentlyOnGround = false;
+            platforms.forEach(p => {
+                if (player.y < p.y && !p.isPassed) {
+                    p.isPassed = true;
+                    score++;
+                    scoreElement.innerText = score;
+                }
+
+                if (player.vy > 0) {
+                    if (player.x < p.x + p.width && player.x + player.width > p.x &&
+                        player.y + player.height > p.y && player.y + player.height < p.y + p.height + player.vy) {
+                        
+                        player.y = p.y - player.height;
+                        
+                        if (p.type === 'super') {
+                            player.vy = superJumpStrength;
+                            player.grounded = false;
+                        } else {
+                            player.vy = 0;
+                            currentlyOnGround = true;
+                        }
+                    }
+                }
+            });
+            player.grounded = currentlyOnGround;
+
+            if (hasStarted) {
+                let scrollSpeed = 1.2;
+                platforms.forEach(p => p.y += scrollSpeed);
+                player.y += scrollSpeed;
+
+                if (player.y < canvas.height / 2) {
+                    let diff = canvas.height / 2 - player.y;
+                    platforms.forEach(p => p.y += diff);
+                    player.y += diff;
+                }
+
+                if (platforms.length > 0 && platforms[platforms.length - 1].y > 0) {
+                    addPlatform(platforms[platforms.length - 1].y - 110);
+                }
+                platforms = platforms.filter(p => p.y < canvas.height + 100);
+
+                if (player.y > canvas.height) {
+                    gameActive = false;
+                    let highScore = localStorage.getItem('towerHighscore') || 0;
+                    if (score > highScore) {
+                        highScore = score;
+                        localStorage.setItem('towerHighscore', highScore);
+                    }
+                    overlay.innerHTML = `<h1>GAME OVER</h1><p>SCORE: ${score}</p><p style="color: #ffff00;">RECORD: ${highScore}</p><br><p><i>ESPACE POUR REJOUER</i></p>`;
+                    overlay.style.display = 'block';
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            platforms.forEach(p => {
+                ctx.fillStyle = (p.type === 'super') ? '#ffff00' : '#00ffcc';
+                ctx.fillRect(p.x, p.y, p.width, p.height);
+            });
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            if (isPaused) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function loop() {
+            update();
+            draw();
+            if (gameActive) requestAnimationFrame(loop);
+        }
+
+        init();
+        loop();
+    </script>
+</body>
+</html>
