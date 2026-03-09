@@ -10,37 +10,40 @@ canvas.height = 600;
 
 // VARIABLES DE CONFIGURATION DU JEU
 let score = 0;
-let gameActive = true;
-let hasStarted = false;
-let isPaused = false; // Nouvelle variable pour la pause
-const gravity = 0.5;
-const jumpStrength = -12;
-const superJumpStrength = -22;
+let gameActive = true; // Score de base du joueur
+let hasStarted = false; // etat de la boucle de jeu
+let isPaused = false; // variable pour la pause
+const gravity = 0.5; // force de la gravité
+const jumpStrength = -12; // Force du saut normal
+const superJumpStrength = -22; // force du rebond
 
 // PROPRIÉTÉS DU JOUEUR
 const player = {
+    // Position de depart du joueur
     x: 185,
     y: 540,
+    // taille du carré
     width: 30,
     height: 30,
+    // vitesse de depart du joueur
     vx: 0,
     vy: 0,
-    grounded: true
+    grounded: true // indique que au demarage le joueur est posé sur le sol
 };
 
 //GESTION DES PLATEFORMES
-let platforms = [];
+let platforms = []; // tableau qui contient toutes les plateformes qu'on voit
 
 // Fonction pour créer une plateforme à une hauteur Y spécifique
 function addPlatform(y) {
-    const isSuper = Math.random() < 0.2;
+    const isSuper = Math.random() < 0.2; // 20% chance - plateforme jaune
     platforms.push({
-        x: Math.random() * (canvas.width - 70),
-        y: y,
-        width: 70,
-        height: 15,
-        type: isSuper ? 'super' : 'normal',
-        isPassed: false
+        x: Math.random() * (canvas.width - 70), // position aléatoire sur l'axe x
+        y: y, // Position Y donnée en paramètre
+        width: 70, // largeur d'une plateforme
+        height: 15, // hauteur d'une plateforme
+        type: isSuper ? 'super' : 'normal', // type de plateforme
+        isPassed: false // deviens true quand le joueur passe au-dessus et augment le score de 1
     });
 }
 
@@ -48,10 +51,10 @@ function addPlatform(y) {
 function init() {
     // Reset du score et de l'état
     score = 0;
-    gameActive = true;
-    hasStarted = false;
-    isPaused = false;
-    scoreElement.innerText = score;
+    gameActive = true; // active le systeme du jeu
+    hasStarted = false; // Attend le premier saut pour commencer
+    isPaused = false; // arrète la pause
+    scoreElement.innerText = score; // met a jour l'affichage du score
     
     // Reset du joueur au centre
     player.x = canvas.width / 2 - 15;
@@ -60,47 +63,46 @@ function init() {
     player.vx = 0;
     player.grounded = true;
 
-    // Reset des plateformes
+    // Reset du tableau des plateformes
     platforms = [];
-    // Le sol de départ
+    // ajout du sol de départ
     platforms.push({ x: 0, y: 570, width: canvas.width, height: 30, type: 'normal', isPassed: true });
-    // La plateforme de départ au centre
+    // ajout de la plateforme de départ (forcement au centre)
     platforms.push({ x: canvas.width / 2 - 35, y: 570 - 110, width: 70, height: 15, type: 'normal', isPassed: false });
 
     // Création des premières plateformes visibles
     for(let i = 2; i < 7; i++) { 
-        addPlatform(570 - (i * 110)); 
+        addPlatform(570 - (i * 110)); // Espacement de 110 pixels entre chacunes
     }
 
-    // Affichage de l'overlay de lancement
+    // Affichage de l'overlay de depart
     overlay.style.display = 'block';
     overlay.innerHTML = `<h1>TOWER CLIMBER</h1><p>FLECHES: BOUGER</p><p>ESPACE: PAUSE</p><p><i>SAUTER POUR COMMENCER</i></p>`;
 }
 
 // REGLAGE DES TOUCHES
-const keys = {};
+const keys = {}; // stock quelles touches sont pressées
 window.onkeydown = (e) => {
-    // Gestion de la pause avec Espace (on utilise e.code pour l'espace car universel)
-    if (e.code === 'Space') {
-        if (!gameActive) {
-            init();
-            requestAnimationFrame(loop);
-        } else if (hasStarted) {
-            isPaused = !isPaused;
-            overlay.style.display = isPaused ? 'block' : 'none';
+    if (e.code === 'Space') { // Si on appuie sur ESPACE (e.code pour l'espace car universel)
+        if (!gameActive) { // si on était mort
+            init(); // relancement
+            requestAnimationFrame(loop);// relancement de l aboucle
+        } else if (hasStarted) { // si on est en partie
+            isPaused = !isPaused; // on inverse l'etat de isPaused
+            overlay.style.display = isPaused ? 'block' : 'none'; // affiche ou cache le menu
             if (isPaused) {
                 overlay.innerHTML = `<h1>PAUSE</h1><p><i>ESPACE POUR REPRENDRE</i></p>`;
             }
         }
-        return;
+        return; // quit la fonction
     }
 
     // On utilise e.key pour détecter la lettre réelle (Z, Q, D, etc.)
-    keys[e.key.toLowerCase()] = true; // On force en minuscule pour éviter les bugs de Majuscule
+    keys[e.key.toLowerCase()] = true; // On enregistre en minuscule pour éviter les bugs de Majuscule
     keys[e.code] = true; // On garde e.code pour les flèches (ArrowUp, etc.)
 };
 
-window.onkeyup = (e) => {
+window.onkeyup = (e) => { // Quand on relâche une touche
     keys[e.key.toLowerCase()] = false;
     keys[e.code] = false;
 };
