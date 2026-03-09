@@ -114,21 +114,22 @@ function update() {
     // Déplacement horizontal
     if (keys['arrowleft'] || keys['q'] || keys['a']) player.vx = -6; // J'ajoute 'a' au cas où pour les QWERTY
     else if (keys['arrowright'] || keys['d']) player.vx = 6;
-    else player.vx = 0;
+    else player.vx = 0; // arret direct si on lache
 
     // Saut
-    if ((keys['arrowup'] || keys['z'] || keys['w']) && player.grounded) {
-        player.vy = jumpStrength;
-        player.grounded = false;
+    if ((keys['arrowup'] || keys['z'] || keys['w']) && player.grounded) { // si joueur sur sol et une des 3 touches pressée
+        player.vy = jumpStrength; // impulsion vers le haut
+        player.grounded = false; // plus sur le sol
         if (!hasStarted) { 
-            hasStarted = true; 
-            overlay.style.display = 'none'; // Disparition du menu lors du commencement
+            hasStarted = true; // le jeu commence si pas deja
+            overlay.style.display = 'none'; // Cache le menu lors du commencement
         }
     }
 
     // Application de la gravitée
     if (hasStarted || !player.grounded) {
-        player.vy += gravity;
+        player.vy += gravity; // gravité augment vitesse de chute
+        // Les positions x et y changent selon la vitesse
         player.y += player.vy;
         player.x += player.vx;
     }
@@ -137,14 +138,14 @@ function update() {
     if (player.x + player.width < 0) player.x = canvas.width;
     if (player.x > canvas.width) player.x = -player.width;
 
-    // Collisions / augmentation de points
+    // Collisions
     let currentlyOnGround = false;
     platforms.forEach(p => {
         // +1 point si le joueur passe une plateforme
         if (player.y < p.y && !p.isPassed) {
-            p.isPassed = true;
-            score++;
-            scoreElement.innerText = score;
+            p.isPassed = true; // marque comme passée
+            score++; // augmente le score
+            scoreElement.innerText = score; // actualise le score
         }
 
         // Atterrissage sur plateforme
@@ -152,44 +153,44 @@ function update() {
             if (player.x < p.x + p.width && player.x + player.width > p.x &&
                 player.y + player.height > p.y && player.y + player.height < p.y + p.height + player.vy) {
                 
-                player.y = p.y - player.height; //Joueur sur la plateforme
+                player.y = p.y - player.height; //Joueur pile au dessus de la plateforme
                 
-                if (p.type === 'super') {
-                    player.vy = superJumpStrength; // Rebond si jaune
+                if (p.type === 'super') { // si jaune
+                    player.vy = superJumpStrength; // Rebond automatique et plus puissant
                     player.grounded = false;
-                } else {
+                } else { // si pas jaune
                     player.vy = 0; // Stop la chute
-                    currentlyOnGround = true;
+                    currentlyOnGround = true; // on est sur le sol
                 }
             }
         }
     });
-    player.grounded = currentlyOnGround;
+    player.grounded = currentlyOnGround; // met a jour l'etat du joueur
 
     // Défilement
     if (hasStarted) {
-        let scrollSpeed = 1.2;
-        platforms.forEach(p => p.y += scrollSpeed);
-        player.y += scrollSpeed;
+        let scrollSpeed = 1.2; // Vitesse de descente automatique
+        platforms.forEach(p => p.y += scrollSpeed); // les plateformes descendent
+        player.y += scrollSpeed; // Le joueur descend aussi avec les plateformes
 
-        // Suit le joueur s'il monte trop haut
+        // Suit le joueur s'il monte plus haut que la moitié
         if (player.y < canvas.height / 2) {
-            let diff = canvas.height / 2 - player.y;
-            platforms.forEach(p => p.y += diff);
-            player.y += diff;
+            let diff = canvas.height / 2 - player.y; // calcule de combien on doit dessendre
+            platforms.forEach(p => p.y += diff); // descente de toutes les plateformes
+            player.y += diff; // descente aussi du joueur
         }
 
         // Génération de plateforme en haut (infini)
-        if (platforms.length > 0 && platforms[platforms.length - 1].y > 0) {
-            addPlatform(platforms[platforms.length - 1].y - 110);
+        if (platforms.length > 0 && platforms[platforms.length - 1].y > 0) { // si la plateforme la plus haute devient visible
+            addPlatform(platforms[platforms.length - 1].y - 110); // ajout d'une plateforme plus haut
         }
         // Suppression des plateformes plus visibles (optimisation des perfs)
         platforms = platforms.filter(p => p.y < canvas.height + 100);
 
         // MENU DU GAME OVER / HIGH SCORE
-        if (player.y > canvas.height) {
-            gameActive = false;
-            
+        if (player.y > canvas.height) { // si le joueur tombe sous le bas de l'écran
+            gameActive = false; // Arrête le jeu
+
             let highScore = localStorage.getItem('towerHighscore') || 0;
             
             if (score > highScore) {
