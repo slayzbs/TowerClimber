@@ -184,18 +184,18 @@ function update() {
         if (platforms.length > 0 && platforms[platforms.length - 1].y > 0) { // si la plateforme la plus haute devient visible
             addPlatform(platforms[platforms.length - 1].y - 110); // ajout d'une plateforme plus haut
         }
-        // Suppression des plateformes plus visibles (optimisation des perfs)
+        // Suppression des plateformes plus visibles 
         platforms = platforms.filter(p => p.y < canvas.height + 100);
 
-        // MENU DU GAME OVER / HIGH SCORE
+        // MENU DU GAME OVER 
         if (player.y > canvas.height) { // si le joueur tombe sous le bas de l'écran
             gameActive = false; // Arrête le jeu
 
-            let highScore = localStorage.getItem('towerHighscore') || 0;
+            let highScore = localStorage.getItem('towerHighscore') || 0; // Récupère le record stocké dasn le navigateur
             
-            if (score > highScore) {
+            if (score > highScore) { // si le score actuel est meilleur que le record
                 highScore = score;
-                localStorage.setItem('towerHighscore', highScore);
+                localStorage.setItem('towerHighscore', highScore); // sauvegarde le nouveau record
             }
 
             overlay.innerHTML = `
@@ -205,7 +205,7 @@ function update() {
                 <br>
                 <p><i>ESPACE POUR REJOUER</i></p>
             `;
-            overlay.style.display = 'block';
+            overlay.style.display = 'block'; // Affiche l'écran de fin
         }
     }
 }
@@ -225,7 +225,7 @@ function draw() {
     ctx.fillStyle = '#ff0055';
     ctx.fillRect(player.x, player.y, player.width, player.height);
     
-    // Petit indicateur visuel de pause sur le canvas
+    // fond assombri si pause
     if (isPaused) {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
